@@ -29,7 +29,7 @@ export default class CreateEquipmentData1615075289609
           },
           {
             name: 'temperature',
-            type: 'int',
+            type: 'numeric',
             default: 0,
           },
           {

@@ -17,6 +17,7 @@ export default class CreateEquipments1615073935933
           {
             name: 'equipament_id',
             type: 'int',
+            isUnique: true,
           },
           {
             name: 'user_id',
