@@ -13,10 +13,6 @@ export class CreateManualConf1615075265931 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'user_id',
-            type: 'int',
-          },
-          {
             name: 'active',
             type: 'boolean',
             default: false,

@@ -4,21 +4,12 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
-
-import User from './User';
 
 @Entity('automatic_conf')
 class AutomaticConf {
   @PrimaryColumn('int')
   id: number;
-
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'user_id' })
-  @Column()
-  user_id: number;
 
   @Column()
   min_humidity: number;

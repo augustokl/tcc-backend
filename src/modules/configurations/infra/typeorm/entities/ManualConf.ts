@@ -6,22 +6,22 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Exclude } from 'class-transformer';
-
-@Entity('users')
-class User {
+@Entity('manual_conf')
+class ManualConf {
   @PrimaryColumn('int')
   id: number;
 
   @Column()
-  name: string;
+  active: boolean;
 
   @Column()
-  email: string;
+  fan: boolean;
 
   @Column()
-  @Exclude()
-  password: string;
+  humidity: boolean;
+
+  @Column()
+  temperature: boolean;
 
   @CreateDateColumn()
   created_at: Date;
@@ -30,4 +30,4 @@ class User {
   updated_at: Date;
 }
 
-export default User;
+export default ManualConf;
