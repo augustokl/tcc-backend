@@ -43,16 +43,6 @@ export default class CreateEquipmentData1615075289609
             default: 'now()',
           },
         ],
-        foreignKeys: [
-          {
-            name: 'EquipamentRepository',
-            referencedTableName: 'equipaments',
-            referencedColumnNames: ['id'],
-            columnNames: ['equipament_id'],
-            onDelete: 'CASCADE',
-            onUpdate: 'CASCADE',
-          },
-        ],
       }),
     );
   }

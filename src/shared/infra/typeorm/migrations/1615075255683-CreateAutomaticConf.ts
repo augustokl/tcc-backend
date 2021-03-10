@@ -13,10 +13,6 @@ export class CreateAutomaticConf1615075255683 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'user_id',
-            type: 'int',
-          },
-          {
             name: 'min_humidity',
             type: 'int',
             default: 0,
@@ -45,16 +41,6 @@ export class CreateAutomaticConf1615075255683 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'now()',
-          },
-        ],
-        foreignKeys: [
-          {
-            name: 'UserRepository',
-            referencedTableName: 'users',
-            referencedColumnNames: ['id'],
-            columnNames: ['user_id'],
-            onDelete: 'CASCADE',
-            onUpdate: 'CASCADE',
           },
         ],
       }),
