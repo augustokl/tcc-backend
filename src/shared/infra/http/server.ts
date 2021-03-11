@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import 'dotenv/config';
 import express from 'express';
 
@@ -6,6 +7,7 @@ const url = process.env.APP_API_URL;
 const port = process.env.APP_API_PORT;
 
 import '@shared/infra/typeorm';
+import '@shared/container';
 
 app.use(express.json());
 

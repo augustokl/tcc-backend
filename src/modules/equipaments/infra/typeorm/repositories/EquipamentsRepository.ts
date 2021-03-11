@@ -27,3 +27,5 @@ class EquipamentsRepository implements IEquipamanetRepository {
     return equipamentData;
   }
 }
+
+export default EquipamentsRepository;
