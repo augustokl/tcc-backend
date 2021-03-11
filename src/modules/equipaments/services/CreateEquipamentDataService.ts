@@ -6,7 +6,7 @@ import ICreateEquipamentDataDTO from '../dtos/ICreateEquipamentDataDTO';
 import IEquipamentsRepository from '../repositories/IEquipamentsRepository';
 
 @injectable()
-class CreateEquipamentData {
+class CreateEquipamentDataService {
   constructor(
     @inject('EquipamentsRepository')
     private equipamentsRepository: IEquipamentsRepository,
@@ -21,4 +21,4 @@ class CreateEquipamentData {
   }
 }
 
-export default CreateEquipamentData;
+export default CreateEquipamentDataService;

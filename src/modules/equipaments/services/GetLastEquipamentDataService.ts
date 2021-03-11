@@ -4,7 +4,7 @@ import EquipamentData from '../infra/typeorm/entities/EquipamentData';
 import IEquipamentsRepository from '../repositories/IEquipamentsRepository';
 
 @injectable()
-class GetLastEquipamentData {
+class GetLastEquipamentDataService {
   constructor(
     @inject('EquipamentsRepository')
     private equipamentsRepository: IEquipamentsRepository,
@@ -17,4 +17,4 @@ class GetLastEquipamentData {
   }
 }
 
-export default GetLastEquipamentData;
+export default GetLastEquipamentDataService;
