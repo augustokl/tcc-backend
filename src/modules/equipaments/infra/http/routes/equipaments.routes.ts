@@ -6,3 +6,5 @@ const equipamentsRouter = Router();
 const equipamentsController = new EquipamentsController();
 
 equipamentsRouter.get('/', equipamentsController.findLast);
+
+export default equipamentsRouter;

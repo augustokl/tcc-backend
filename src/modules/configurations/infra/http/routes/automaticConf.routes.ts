@@ -2,8 +2,10 @@ import { Router } from 'express';
 
 import ConfigurationsAutomatic from '../controllers/ConfigurationsAutomatic';
 
-const equipamentsRouter = Router();
+const automaticConfigRouter = Router();
 const configurationsAutomatic = new ConfigurationsAutomatic();
 
-equipamentsRouter.get('/', configurationsAutomatic.find);
-equipamentsRouter.put('/', configurationsAutomatic.update);
+automaticConfigRouter.get('/', configurationsAutomatic.find);
+automaticConfigRouter.put('/', configurationsAutomatic.update);
+
+export default automaticConfigRouter;
