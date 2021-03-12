@@ -23,7 +23,7 @@ class EquipamentsController {
       GetLastEquipamentDataService,
     );
 
-    const lastEquipamentData = getLastEquipamnetDataService.execute();
+    const lastEquipamentData = await getLastEquipamnetDataService.execute();
 
     return response.json(lastEquipamentData);
   }

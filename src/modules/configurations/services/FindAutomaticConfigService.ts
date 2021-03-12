@@ -12,7 +12,7 @@ class FindAutomaticConfigService {
   ) {}
 
   public async execute(): Promise<AutomaticConf | undefined> {
-    const automaticConf = this.configurationsAutomaticRepository.findAutomaticConfig();
+    const automaticConf = await this.configurationsAutomaticRepository.findAutomaticConfig();
 
     return automaticConf;
   }

@@ -12,7 +12,7 @@ class FindManualConfigService {
   ) {}
 
   public async execute(): Promise<ManualConf | undefined> {
-    const manualConf = this.configurationsManualRepository.findManualConfig();
+    const manualConf = await this.configurationsManualRepository.findManualConfig();
 
     return manualConf;
   }
