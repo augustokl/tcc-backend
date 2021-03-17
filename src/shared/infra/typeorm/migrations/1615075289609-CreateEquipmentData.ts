@@ -5,16 +5,17 @@ export default class CreateEquipmentData1615075289609
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'equipament_data',
+        name: 'equipment_data',
         columns: [
           {
             name: 'id',
             type: 'int',
             isPrimary: true,
+            isGenerated: true,
             generationStrategy: 'increment',
           },
           {
-            name: 'equipament_id',
+            name: 'equipment_id',
             type: 'int',
           },
           {
@@ -48,6 +49,6 @@ export default class CreateEquipmentData1615075289609
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('equipament_data');
+    await queryRunner.dropTable('equipment_data');
   }
 }

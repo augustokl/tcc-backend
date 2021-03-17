@@ -12,6 +12,8 @@ class ConfigurationsAutomatic {
 
     const automaticChanges = await findAutomaticConfigService.execute();
 
+    console.log(automaticChanges);
+
     return response.json(automaticChanges);
   }
 

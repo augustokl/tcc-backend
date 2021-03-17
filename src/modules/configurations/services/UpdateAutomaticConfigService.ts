@@ -8,7 +8,7 @@ import IConfigurationsAutomaticRepository from '../repositories/IConfigurationsA
 @injectable()
 class UpdateAutomaticConfigService {
   constructor(
-    @inject('IConfigurationsAutomaticRepository')
+    @inject('ConfigurationsAutomaticRepository')
     private configurationsAutomaticRepository: IConfigurationsAutomaticRepository,
   ) {}
 

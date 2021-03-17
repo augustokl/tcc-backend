@@ -6,8 +6,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('')
-class EquipamentData {
+import { Exclude } from 'class-transformer';
+
+@Entity('equipment_data')
+class EquipmentData {
   @PrimaryColumn('int')
   id: number;
 
@@ -20,11 +22,13 @@ class EquipamentData {
   @Column()
   temperature: number;
 
+  @Exclude()
   @CreateDateColumn()
   created_at: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updated_at: Date;
 }
 
-export default EquipamentData;
+export default EquipmentData;

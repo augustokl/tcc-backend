@@ -10,6 +10,7 @@ export class CreateManualConf1615075265931 implements MigrationInterface {
             name: 'id',
             type: 'int',
             isPrimary: true,
+            isGenerated: true,
             generationStrategy: 'increment',
           },
           {

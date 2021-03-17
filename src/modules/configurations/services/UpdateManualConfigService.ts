@@ -8,7 +8,7 @@ import IConfigurationsManualRepository from '../repositories/IConfigurationsManu
 @injectable()
 class UpdateManualConfigService {
   constructor(
-    @inject('IConfigurationsManualRepository')
+    @inject('ConfigurationsManualRepository')
     private configurationsManualRepository: IConfigurationsManualRepository,
   ) {}
 
