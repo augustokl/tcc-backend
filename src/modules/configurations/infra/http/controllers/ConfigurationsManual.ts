@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import FindManualConfigService from '@modules/configurations/services/FindManualConfigService';
 import UpdateManualConfigService from '@modules/configurations/services/UpdateManualConfigService';
@@ -8,9 +9,9 @@ class ConfigurationsManual {
   public async find(request: Request, response: Response): Promise<Response> {
     const findManualConfigService = container.resolve(FindManualConfigService);
 
-    const manualChanges = await findManualConfigService.execute();
+    const manualConf = await findManualConfigService.execute();
 
-    return response.json(manualChanges);
+    return response.json(classToClass(manualConf));
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
@@ -27,7 +28,7 @@ class ConfigurationsManual {
       temperature: Boolean(temperature),
     });
 
-    return response.json(manualConf);
+    return response.json(classToClass(manualConf));
   }
 }
 

@@ -6,8 +6,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { Exclude } from 'class-transformer';
+
 @Entity('manual_conf')
 class ManualConf {
+  @Exclude()
   @PrimaryColumn('int')
   id: number;
 
@@ -23,9 +26,11 @@ class ManualConf {
   @Column()
   temperature: boolean;
 
+  @Exclude()
   @CreateDateColumn()
   created_at: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updated_at: Date;
 }

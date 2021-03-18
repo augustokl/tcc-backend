@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import FindAutomaticConfigService from '@modules/configurations/services/FindAutomaticConfigService';
 import UpdateAutomaticConfigService from '@modules/configurations/services/UpdateAutomaticConfigService';
@@ -12,9 +13,7 @@ class ConfigurationsAutomatic {
 
     const automaticChanges = await findAutomaticConfigService.execute();
 
-    console.log(automaticChanges);
-
-    return response.json(automaticChanges);
+    return response.json(classToClass(automaticChanges));
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
