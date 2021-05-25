@@ -5,7 +5,7 @@ export class NewFieldsAutomaticConf1621908181067 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
       await queryRunner.addColumns('automatic_conf', [
         new TableColumn({
-          name: 'activation_tiome',
+          name: 'activation_time',
           type: 'int',
           default: 0,
         }),

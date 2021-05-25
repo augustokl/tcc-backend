@@ -26,6 +26,9 @@ class ManualConf {
   @Column()
   temperature: boolean;
 
+  @Column()
+  sombrite: boolean;
+
   @Exclude()
   @CreateDateColumn()
   created_at: Date;

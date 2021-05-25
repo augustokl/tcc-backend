@@ -26,6 +26,15 @@ class AutomaticConf {
   @Column()
   max_temperature: number;
 
+  @Column()
+  activation_time: number;
+
+  @Column()
+  close_sombrite: String;
+
+  @Column()
+  open_sombrite: String
+
   @Exclude()
   @CreateDateColumn()
   created_at: Date;

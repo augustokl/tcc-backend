@@ -3,4 +3,5 @@ export default interface IUpdateManualConfigDTO {
   fan: boolean;
   humidity: boolean;
   temperature: boolean;
+  sombrite: boolean;
 }

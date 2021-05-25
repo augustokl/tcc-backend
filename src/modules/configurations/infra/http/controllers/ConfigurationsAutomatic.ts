@@ -22,6 +22,9 @@ class ConfigurationsAutomatic {
       max_humidity,
       min_temperature,
       max_temperature,
+      activation_time,
+      close_sombrite,
+      open_sombrite,
     } = request.body;
 
     const updateAutomaticConfigService = container.resolve(
@@ -33,6 +36,9 @@ class ConfigurationsAutomatic {
       max_humidity: Number(max_humidity),
       min_temperature: Number(min_temperature),
       max_temperature: Number(max_temperature),
+      activation_time: Number(activation_time),
+      close_sombrite: String(close_sombrite),
+      open_sombrite: String(open_sombrite),
     });
 
     return response.json(automaticConf);

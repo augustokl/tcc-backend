@@ -22,6 +22,24 @@ class EquipmentData {
   @Column()
   temperature: number;
 
+  @Column()
+  soil_humidity: number;
+
+  @Column()
+  uv: number;
+
+  @Column()
+  water_flow: number;
+
+  @Column()
+  sombrite: boolean;
+
+  @Column()
+  heater: boolean;
+
+  @Column()
+  water_pump: boolean;
+
   @Exclude()
   @CreateDateColumn()
   created_at: Date;

@@ -15,7 +15,7 @@ class ConfigurationsManual {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { active, fan, humidity, temperature } = request.body;
+    const { active, fan, humidity, temperature, sombrite } = request.body;
 
     const updateManualConfigService = container.resolve(
       UpdateManualConfigService,
@@ -26,6 +26,7 @@ class ConfigurationsManual {
       fan: Boolean(fan),
       humidity: Boolean(humidity),
       temperature: Boolean(temperature),
+      sombrite: Boolean(sombrite)
     });
 
     return response.json(classToClass(manualConf));
