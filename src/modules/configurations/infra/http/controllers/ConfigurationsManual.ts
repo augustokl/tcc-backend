@@ -4,6 +4,7 @@ import { classToClass } from 'class-transformer';
 
 import FindManualConfigService from '@modules/configurations/services/FindManualConfigService';
 import UpdateManualConfigService from '@modules/configurations/services/UpdateManualConfigService';
+import ManualConf from '../../typeorm/entities/ManualConf';
 
 class ConfigurationsManual {
   public async find(request: Request, response: Response): Promise<Response> {
@@ -12,6 +13,12 @@ class ConfigurationsManual {
     const manualConf = await findManualConfigService.execute();
 
     return response.json(classToClass(manualConf));
+  }
+
+  public async findLocal(): Promise<ManualConf | undefined> {
+    const findManualConfigService = container.resolve(FindManualConfigService);
+
+    return await findManualConfigService.execute();
   }
 
   public async update(request: Request, response: Response): Promise<Response> {

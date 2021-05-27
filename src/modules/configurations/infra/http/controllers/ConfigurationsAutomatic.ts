@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import { classToClass } from 'class-transformer';
 
+import AutomaticConf from '../../typeorm/entities/AutomaticConf';
 import FindAutomaticConfigService from '@modules/configurations/services/FindAutomaticConfigService';
 import UpdateAutomaticConfigService from '@modules/configurations/services/UpdateAutomaticConfigService';
 
@@ -14,6 +15,14 @@ class ConfigurationsAutomatic {
     const automaticChanges = await findAutomaticConfigService.execute();
 
     return response.json(classToClass(automaticChanges));
+  }
+
+  public async findLocal(): Promise<AutomaticConf | undefined> {
+    const findAutomaticConfigService = container.resolve(
+      FindAutomaticConfigService,
+    );
+
+    return await findAutomaticConfigService.execute();
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
