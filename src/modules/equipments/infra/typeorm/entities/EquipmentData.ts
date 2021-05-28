@@ -1,7 +1,7 @@
 import {
   Entity,
   Column,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,25 +10,25 @@ import { Exclude } from 'class-transformer';
 
 @Entity('equipment_data')
 class EquipmentData {
-  @PrimaryColumn('int')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()
   fan: boolean;
 
-  @Column()
+  @Column('numeric')
   humidity: number;
 
-  @Column()
+  @Column('numeric')
   temperature: number;
 
-  @Column()
+  @Column('numeric')
   soil_humidity: number;
 
-  @Column()
+  @Column('numeric')
   uv: number;
 
-  @Column()
+  @Column('numeric')
   water_flow: number;
 
   @Column()

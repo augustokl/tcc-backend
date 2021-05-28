@@ -15,23 +15,19 @@ export default class CreateEquipmentData1615075289609
             generationStrategy: 'increment',
           },
           {
-            name: 'equipment_id',
-            type: 'int',
-          },
-          {
             name: 'fan',
             type: 'boolean',
             default: false,
           },
           {
             name: 'humidity',
-            type: 'int',
-            default: 0,
+            type: 'numeric',
+            default: 0.0,
           },
           {
             name: 'temperature',
             type: 'numeric',
-            default: 0,
+            default: 0.0,
           },
           {
             name: 'created_at',

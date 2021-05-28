@@ -30,10 +30,10 @@ class AutomaticConf {
   activation_time: number;
 
   @Column()
-  close_sombrite: String;
+  close_sombrite: string;
 
   @Column()
-  open_sombrite: String
+  open_sombrite: string
 
   @Exclude()
   @CreateDateColumn()

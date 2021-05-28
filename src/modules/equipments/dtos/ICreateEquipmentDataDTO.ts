@@ -1,5 +1,4 @@
 export default interface ICreateEquipmentDataDTO {
-  equipment_id: number;
   fan: boolean;
   water_flow: number;
   sombrite: boolean;

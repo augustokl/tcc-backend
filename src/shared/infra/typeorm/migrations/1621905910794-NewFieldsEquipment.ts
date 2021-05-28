@@ -6,18 +6,18 @@ export class NewFieldsEquipment1621905910794 implements MigrationInterface {
       await queryRunner.addColumns('equipment_data', [
         new TableColumn({
           name: 'soil_humidity',
-          type: 'int',
-          default: 0,
+          type: 'numeric',
+          default: 0.0,
         }),
         new TableColumn({
           name: 'uv',
-          type: 'decimal',
-          default: 0,
+          type: 'numeric',
+          default: 0.0,
         }),
         new TableColumn({
           name: 'water_flow',
-          type: 'decimal',
-          default: 0,
+          type: 'numeric',
+          default: 0.0,
         }),
         new TableColumn({
           name: 'sombrite',
