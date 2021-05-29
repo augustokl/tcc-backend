@@ -1,6 +1,5 @@
 import ICreateEquipmentDataDTO from "../dtos/ICreateEquipmentDataDTO";
 import { EquipmentChannel } from "./EquipmentChannel";
-import {promisify} from 'util'
 
 
 
@@ -8,10 +7,6 @@ export interface IEquipmentCommand {
   channel: number;
   onOff: boolean;
   activation: number;
-}
-
-const sleep = (milliseconds: number) => {
-  return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 export function splitData(data:String): ICreateEquipmentDataDTO {
@@ -45,15 +40,23 @@ export function splitData(data:String): ICreateEquipmentDataDTO {
   }
 }
 
-export async function formatCommand(command: IEquipmentCommand): Promise<string> {
-  await sleep(2000)
-  const send = `${String.fromCharCode(62)}CD,${command.channel},${Number(command.onOff)},${command.activation}${String.fromCharCode(60)}`
-  console.log(send)
-  return send
+export function addToQueue(command: IEquipmentCommand, queue: string[]): string[] {
+  const formattedComand = formatCommand(command)
+  if(!queue.includes(formattedComand)){
+    queue.push(formattedComand)
+  }
+
+  return queue
+}
+
+function formatCommand(command: IEquipmentCommand): string {
+  const formattedCommand = `${String.fromCharCode(62)}CD,${command.channel},${Number(command.onOff)},${command.activation}${String.fromCharCode(60)}`;
+  console.log(formattedCommand)
+  return formattedCommand
 }
 
 function soilHumidityCalc(value: number):number {
-  return 100 * ((978 - value) / 978)
+  return 100 * ((1023 - value) / 1023)
 }
 
 function uvIndex(value:number):number {
@@ -105,6 +108,8 @@ function uvIndex(value:number):number {
 
   return index;
 }
+
+
 
 function convertDeciamlToBinary(value: number): String[] {
   const binaryArray = value.toString(2).split('')

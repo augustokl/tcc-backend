@@ -17,6 +17,7 @@ class UpdateManualConfigService {
     fan,
     humidity,
     temperature,
+    sombrite
   }: IUpdateManualConfigDTO): Promise<ManualConf | undefined> {
     const manualConf = await this.configurationsManualRepository.findManualConfig();
 
@@ -28,6 +29,7 @@ class UpdateManualConfigService {
     manualConf.fan = fan;
     manualConf.humidity = humidity;
     manualConf.temperature = temperature;
+    manualConf.sombrite = sombrite;
     manualConf.updated_at = new Date();
 
     const newManualConf = await this.configurationsManualRepository.updateManualConfig(

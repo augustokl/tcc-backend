@@ -7,7 +7,7 @@ import {isAfter, isBefore} from 'date-fns'
 import ConfigurationsAutomatic from '@modules/configurations/infra/http/controllers/ConfigurationsAutomatic'
 import ConfigurationsManual from '@modules/configurations/infra/http/controllers/ConfigurationsManual'
 import EquipmentsController from '@modules/equipments/infra/http/controllers/EquipmentsController'
-import { formatCommand, IEquipmentCommand, splitData } from '@modules/equipments/utils/utils';
+import { addToQueue, IEquipmentCommand, splitData } from '@modules/equipments/utils/utils';
 import {EquipmentChannel} from '@modules/equipments/utils/EquipmentChannel';
 
 const port = 7090;
@@ -15,6 +15,8 @@ const server = new Net.Server();
 const configurationsAutomatic = new ConfigurationsAutomatic()
 const configurationsManual = new ConfigurationsManual()
 const equipmentsController = new EquipmentsController()
+
+let commandQueue: string[] = []
 
 
 import '@shared/infra/typeorm';
@@ -48,56 +50,48 @@ server.on('connection', function(socket) {
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.fan
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             } else {
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.fan
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if (confManual.humidity){
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             } else {
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if (confManual.temperature){
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             } else {
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if (confManual.sombrite){
               command.activation = 5;
               command.onOff = true;
               command.channel = EquipmentChannel.sombrite
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             } else {
               command.activation = 5;
               command.onOff = false;
               command.channel = EquipmentChannel.sombrite
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
           } else {
@@ -117,32 +111,28 @@ server.on('connection', function(socket) {
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.sombrite
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(isAfter(now, closeDate)) {
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.sombrite
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.min_temperature && data.temperature < confAuto?.min_temperature) {
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.heater
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.max_temperature && data.temperature > confAuto?.max_temperature) {
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.fan
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.min_temperature &&
@@ -153,30 +143,26 @@ server.on('connection', function(socket) {
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.fan
-              let formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
 
               command.activation = 0;
               command.onOff = false;
               command.channel = EquipmentChannel.heater
-              formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.min_humidity && data.humidity < confAuto?.min_humidity) {
               command.activation = confAuto.activation_time;
               command.onOff = true;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.max_humidity && data.humidity > confAuto?.max_humidity) {
               command.activation = confAuto.activation_time;
               command.onOff = true;
               command.channel = EquipmentChannel.water_pump
-              const formated = await formatCommand(command)
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
 
             if(confAuto?.min_humidity &&
@@ -184,14 +170,20 @@ server.on('connection', function(socket) {
                 data.humidity > confAuto?.min_humidity &&
                 data.humidity < confAuto?.max_humidity
               ) {
-              const formated = await formatCommand(command)
-
               command.activation = confAuto.activation_time;
               command.onOff = false;
               command.channel = EquipmentChannel.water_pump
-              socket.write(formated)
+              commandQueue = addToQueue(command, commandQueue)
             }
           }
+      }
+
+      if (commandQueue.length) {
+        setTimeout(() => {
+          console.log(`sending command, queue status: ${commandQueue.length}`)
+          const command = '' + commandQueue.shift()
+          socket.write(command)
+        }, 3000)
       }
     });
 

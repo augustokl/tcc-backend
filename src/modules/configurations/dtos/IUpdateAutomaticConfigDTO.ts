@@ -4,6 +4,6 @@ export default interface IUpdateAutomaticConfigDTO {
   min_temperature: number;
   max_temperature: number;
   activation_time: number;
-  open_sombrite: string;
-  close_sombrite: string;
+  open_sombrite: Date;
+  close_sombrite: Date;
 }

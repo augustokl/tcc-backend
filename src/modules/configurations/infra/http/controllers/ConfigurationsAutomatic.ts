@@ -46,8 +46,8 @@ class ConfigurationsAutomatic {
       min_temperature: Number(min_temperature),
       max_temperature: Number(max_temperature),
       activation_time: Number(activation_time),
-      close_sombrite: String(close_sombrite),
-      open_sombrite: String(open_sombrite),
+      close_sombrite: new Date(close_sombrite),
+      open_sombrite: new Date(open_sombrite),
     });
 
     return response.json(automaticConf);
