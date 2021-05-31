@@ -1,6 +1,7 @@
 export enum EquipmentChannel {
-  sombrite = 0,
-  heater = 1,
-  fan = 2,
-  water_pump = 3,
+  heater = 0,
+  fan = 1,
+  water_pump = 2,
+  open_sombrite = 3,
+  close_sombrite = 4,
 }

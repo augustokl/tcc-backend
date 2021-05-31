@@ -3,10 +3,12 @@ import 'dotenv/config';
 
 import Net from 'net'
 import {isAfter, isBefore} from 'date-fns'
+import { isEqual } from 'lodash'
 
 import ConfigurationsAutomatic from '@modules/configurations/infra/http/controllers/ConfigurationsAutomatic'
 import ConfigurationsManual from '@modules/configurations/infra/http/controllers/ConfigurationsManual'
 import EquipmentsController from '@modules/equipments/infra/http/controllers/EquipmentsController'
+import ExecutedCommandController from '@modules/equipments/infra/local/controllers/ExecutedCommandController'
 import { addToQueue, IEquipmentCommand, splitData } from '@modules/equipments/utils/utils';
 import {EquipmentChannel} from '@modules/equipments/utils/EquipmentChannel';
 
@@ -15,19 +17,26 @@ const server = new Net.Server();
 const configurationsAutomatic = new ConfigurationsAutomatic()
 const configurationsManual = new ConfigurationsManual()
 const equipmentsController = new EquipmentsController()
+const executedCommandController = new ExecutedCommandController()
+
+let previousManual:ManualConf;
 
 let commandQueue: string[] = []
 
 
 import '@shared/infra/typeorm';
 import '@shared/container';
+import ManualConf from '@modules/configurations/infra/typeorm/entities/ManualConf';
+import { searchExecuted } from '@modules/equipments/utils/executedCommand';
 
 server.listen(port, function() {
     console.log(`Server listening for connection requests on socket localhost:${port}`);
 });
 
-server.on('connection', function(socket) {
+server.on('connection', async function(socket) {
     console.log('A new connection has been established.');
+
+    const executedTodaySombrite = await searchExecuted(executedCommandController)
 
     socket.on('data', async function(chunk) {
         const confAuto = await configurationsAutomatic.findLocal()
@@ -39,12 +48,17 @@ server.on('connection', function(socket) {
 
         if (received.charAt(0) != 'B'){
 
-          const data = splitData(received);
+          const data = splitData(received, executedTodaySombrite);
           await equipmentsController.create(data)
 
           console.log(`Data received from client: ${chunk.toString()}`);
 
           if (confManual?.active) {
+
+
+            if(isEqual(previousManual, confManual)){
+              return;
+            }
 
             if (confManual.fan){
               command.activation = 0;
@@ -85,21 +99,23 @@ server.on('connection', function(socket) {
             if (confManual.sombrite){
               command.activation = 5;
               command.onOff = true;
-              command.channel = EquipmentChannel.sombrite
+              command.channel = EquipmentChannel.open_sombrite
               commandQueue = addToQueue(command, commandQueue)
             } else {
               command.activation = 5;
               command.onOff = false;
-              command.channel = EquipmentChannel.sombrite
+              command.channel = EquipmentChannel.close_sombrite
               commandQueue = addToQueue(command, commandQueue)
             }
+
+            previousManual = confManual
 
           } else {
 
             const now = new Date()
             const dateOpenSombrite: string[] | undefined = confAuto?.open_sombrite.split(':')
             const openDate = new Date()
-            const dateCloseSombrite: string[] | undefined = confAuto?.open_sombrite.split(':')
+            const dateCloseSombrite: string[] | undefined = confAuto?.close_sombrite.split(':')
             const closeDate = new Date()
 
             openDate.setHours(Number(dateOpenSombrite && dateOpenSombrite[0]))
@@ -107,17 +123,17 @@ server.on('connection', function(socket) {
             closeDate.setHours(Number(dateCloseSombrite && dateCloseSombrite[0]))
             closeDate.setMinutes(Number(dateCloseSombrite && dateCloseSombrite[1]))
 
-            if(isBefore(closeDate, now) && isAfter(openDate, now)){
-              command.activation = 0;
+            if(isBefore(now, closeDate) && isAfter(now, openDate) && !data.sombrite){
+              command.activation = 7;
               command.onOff = true;
-              command.channel = EquipmentChannel.sombrite
+              command.channel = EquipmentChannel.open_sombrite
               commandQueue = addToQueue(command, commandQueue)
             }
 
-            if(isAfter(now, closeDate)) {
-              command.activation = 0;
-              command.onOff = false;
-              command.channel = EquipmentChannel.sombrite
+            if(isAfter(now, closeDate) && data.sombrite) {
+              command.activation = 7;
+              command.onOff = true;
+              command.channel = EquipmentChannel.close_sombrite
               commandQueue = addToQueue(command, commandQueue)
             }
 
@@ -128,7 +144,7 @@ server.on('connection', function(socket) {
               commandQueue = addToQueue(command, commandQueue)
             }
 
-            if(confAuto?.max_temperature && data.temperature > confAuto?.max_temperature) {
+            if(confAuto?.max_temperature && !data.fan && data.temperature > confAuto?.max_temperature) {
               command.activation = 0;
               command.onOff = true;
               command.channel = EquipmentChannel.fan
@@ -137,6 +153,7 @@ server.on('connection', function(socket) {
 
             if(confAuto?.min_temperature &&
                 confAuto?.max_temperature &&
+                (data.heater || data.fan) &&
                 data.temperature > confAuto?.min_temperature &&
                 data.temperature < confAuto?.max_temperature
               ) {
@@ -151,26 +168,15 @@ server.on('connection', function(socket) {
               commandQueue = addToQueue(command, commandQueue)
             }
 
-            if(confAuto?.min_humidity && data.humidity < confAuto?.min_humidity) {
+            if(confAuto?.min_humidity && !data.water_pump && data.soil_humidity < confAuto?.min_humidity) {
               command.activation = confAuto.activation_time;
               command.onOff = true;
               command.channel = EquipmentChannel.water_pump
               commandQueue = addToQueue(command, commandQueue)
             }
 
-            if(confAuto?.max_humidity && data.humidity > confAuto?.max_humidity) {
-              command.activation = confAuto.activation_time;
-              command.onOff = true;
-              command.channel = EquipmentChannel.water_pump
-              commandQueue = addToQueue(command, commandQueue)
-            }
-
-            if(confAuto?.min_humidity &&
-                confAuto?.max_humidity &&
-                data.humidity > confAuto?.min_humidity &&
-                data.humidity < confAuto?.max_humidity
-              ) {
-              command.activation = confAuto.activation_time;
+            if(confAuto?.min_humidity && data.water_pump && data.soil_humidity > confAuto?.min_humidity) {
+              command.activation = 0
               command.onOff = false;
               command.channel = EquipmentChannel.water_pump
               commandQueue = addToQueue(command, commandQueue)
@@ -180,8 +186,9 @@ server.on('connection', function(socket) {
 
       if (commandQueue.length) {
         setTimeout(() => {
-          console.log(`sending command, queue status: ${commandQueue.length}`)
           const command = '' + commandQueue.shift()
+          console.log(`sending command: ${command}, queue status: ${commandQueue.length}`)
+          console.log(`still in queue: ${commandQueue.toString()} `)
           socket.write(command)
         }, 3000)
       }

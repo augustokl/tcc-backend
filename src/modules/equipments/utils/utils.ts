@@ -1,7 +1,6 @@
 import ICreateEquipmentDataDTO from "../dtos/ICreateEquipmentDataDTO";
 import { EquipmentChannel } from "./EquipmentChannel";
-
-
+import { IExecutedToday } from "./executedCommand";
 
 export interface IEquipmentCommand {
   channel: number;
@@ -9,29 +8,33 @@ export interface IEquipmentCommand {
   activation: number;
 }
 
-export function splitData(data:String): ICreateEquipmentDataDTO {
-  const splitedData = data.split(',');
-  // const outputs = convertDeciamlToBinary(Number(splitedData.pop()))
-  const uv = uvIndex(Number(splitedData[3]))
-  const soilHumidity = soilHumidityCalc(Number(splitedData[5]))
+interface IRangeCalc {
+  value: number;
+  inMin: number;
+  inMax: number;
+  outMin: number;
+  outMax: number;
+}
 
-  // return {
-  //   equipment_id: 1,
-  //   fan: Boolean(Number(outputs[EquipmentChannel.fan])),
-  //   heater: Boolean(Number(outputs[EquipmentChannel.heater])),
-  //   sombrite: Boolean(Number(outputs[EquipmentChannel.sombrite])),
-  //   water_pump: Boolean(Number(outputs[EquipmentChannel.water_pump])),
-  //   temperature: Number(splitedData[0]),
-  //   humidity: Number(splitedData[1]),
-  //   water_flow: 0,
-  //   soil_humidity: soilHumidity,
-  //   uv: uv
-  // }
-   return {
-    fan: false,
-    heater: false,
-    sombrite: false,
-    water_pump: false,
+export function splitData(data:String, executedToday: IExecutedToday): ICreateEquipmentDataDTO {
+  const splitedData = data.split(',');
+  const outputs = convertDeciamlToBinary(Number(splitedData.pop()))
+  const uv = uvIndex(Number(splitedData[3]))
+  const soilRange = {
+    value: Number(splitedData[5]),
+    inMin: 377,
+    inMax: 1023,
+    outMin: 100,
+    outMax: 0,
+  }
+
+  const soilHumidity = soilHumidityCalc(soilRange)
+
+  return {
+    fan: Boolean(Number(outputs[EquipmentChannel.fan])),
+    heater: Boolean(Number(outputs[EquipmentChannel.heater])),
+    sombrite: Boolean(),
+    water_pump: Boolean(Number(outputs[EquipmentChannel.water_pump])),
     temperature: Number(splitedData[0]),
     humidity: Number(splitedData[1]),
     water_flow: 0,
@@ -50,13 +53,29 @@ export function addToQueue(command: IEquipmentCommand, queue: string[]): string[
 }
 
 function formatCommand(command: IEquipmentCommand): string {
-  const formattedCommand = `${String.fromCharCode(62)}CD,${command.channel},${Number(command.onOff)},${command.activation}${String.fromCharCode(60)}`;
-  console.log(formattedCommand)
+  const formattedCommand = `${String.fromCharCode(62)}CD,${command.channel},${Number(command.onOff)},${command.activation}${String.fromCharCode(60)}\r\n`;
   return formattedCommand
 }
 
-function soilHumidityCalc(value: number):number {
-  return 100 * ((1023 - value) / 1023)
+function checkSombriteStatus(executedToday: IExecutedToday): boolean {
+  const today = new Date().getDate()
+
+  if (today !== executedToday.day) {
+    executedToday.openSombrite = false
+    executedToday.closeSombrite = false
+
+    return false
+  }
+
+  if (executedToday.openSombrite && !executedToday.closeSombrite) {
+    return true
+  }
+
+  return false
+}
+
+function soilHumidityCalc({value, inMin, inMax, outMin, outMax}: IRangeCalc):number {
+  return Math.round((value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin)
 }
 
 function uvIndex(value:number):number {

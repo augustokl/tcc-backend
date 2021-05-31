@@ -1,3 +1,5 @@
+import { IEquipmentCommand } from "@modules/equipments/utils/utils"
+
 interface ISombriteDate {
   open: Date;
   close: Date;
@@ -23,8 +25,18 @@ export function automaticConfigSombrite(open: string, close: string): ISombriteD
 }
 
 export function extractDateSombrite(open: Date, close: Date): ISombriteString {
-  const openString = `${open.getHours()}:${open.getMinutes()}`
-  const closeString = `${close.getHours()}:${close.getMinutes()}`
+  const openString = `${twoDigitsString(open.getHours())}:${twoDigitsString(open.getMinutes())}`
+  const closeString = `${twoDigitsString(close.getHours())}:${twoDigitsString(close.getMinutes())}`
 
   return {open: openString, close: closeString}
+}
+
+
+function twoDigitsString(value: number): string {
+  const formattedNumber = value.toLocaleString('pt-br', {
+    minimumIntegerDigits: 2,
+    useGrouping: false
+  })
+
+  return formattedNumber
 }
