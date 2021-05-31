@@ -5,8 +5,8 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('equipment_data')
-class EquipmentData {
+@Entity('executed_command')
+class ExecutedCommand {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -17,4 +17,4 @@ class EquipmentData {
   created_at: Date;
 }
 
-export default EquipmentData;
+export default ExecutedCommand;

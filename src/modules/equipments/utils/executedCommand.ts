@@ -8,10 +8,14 @@ export interface IExecutedToday {
   day: number
 }
 
+const open = `B,${EquipmentChannel.open_sombrite},OK`;
+const close = `B,${EquipmentChannel.close_sombrite},OK`;
+const day = new Date().getDate()
+
+
 export async function searchExecuted(executedCommandController: ExecutedCommandController): Promise<IExecutedToday> {
-  const openedSombrite = await executedCommandController.find(`B:${EquipmentChannel.open_sombrite}:OK`)
-  const closedSombrite = await executedCommandController.find(`B:${EquipmentChannel.close_sombrite}:OK`)
-  const day = new Date().getDate()
+  const openedSombrite = await executedCommandController.find(open)
+  const closedSombrite = await executedCommandController.find(close)
 
   const executedToday = {
     openSombrite: openedSombrite,
@@ -20,4 +24,23 @@ export async function searchExecuted(executedCommandController: ExecutedCommandC
   }
 
   return executedToday
+}
+
+export async function checkCommandSombrite(
+  command: string, executedCommandController:
+  ExecutedCommandController,
+  executedToday:IExecutedToday): Promise<IExecutedToday>{
+    command = command.trimEnd();
+    if (command === open){
+      await executedCommandController.create({command})
+      executedToday.openSombrite = true
+      executedToday.day = day
+    }
+    if (command === close){
+      await executedCommandController.create({command})
+      executedToday.closeSombrite = true
+      executedToday.day = day
+    }
+
+    return executedToday
 }

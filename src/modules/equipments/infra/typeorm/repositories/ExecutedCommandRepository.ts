@@ -12,9 +12,9 @@ class ExecutedCommandRepository implements IExecutedCommandRepository {
   }
 
   public async create(data: ICreateExecutedCommandDTO): Promise<void> {
-    const equipmentData = this.repository.create(data);
+    const executedCommand = this.repository.create(data);
 
-    await this.repository.save(equipmentData);
+    await this.repository.save(executedCommand);
   }
 
   public async find(command: string): Promise<boolean> {
@@ -24,7 +24,7 @@ class ExecutedCommandRepository implements IExecutedCommandRepository {
     const endOfDay = new Date()
     endOfDay.setHours(23,59,59,999);
 
-    const executedCommand = await this.repository.find({
+    const executedCommand = await this.repository.findOne({
       where: {
         command: command,
         created_at: Between(startOfDay, endOfDay)

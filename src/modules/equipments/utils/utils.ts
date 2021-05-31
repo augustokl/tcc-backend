@@ -1,3 +1,4 @@
+import ManualConf from "@modules/configurations/infra/typeorm/entities/ManualConf";
 import ICreateEquipmentDataDTO from "../dtos/ICreateEquipmentDataDTO";
 import { EquipmentChannel } from "./EquipmentChannel";
 import { IExecutedToday } from "./executedCommand";
@@ -30,10 +31,12 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
 
   const soilHumidity = soilHumidityCalc(soilRange)
 
+  const sombriteStauts = checkSombriteStatus(executedToday)
+
   return {
     fan: Boolean(Number(outputs[EquipmentChannel.fan])),
     heater: Boolean(Number(outputs[EquipmentChannel.heater])),
-    sombrite: Boolean(),
+    sombrite: sombriteStauts,
     water_pump: Boolean(Number(outputs[EquipmentChannel.water_pump])),
     temperature: Number(splitedData[0]),
     humidity: Number(splitedData[1]),
@@ -128,6 +131,39 @@ function uvIndex(value:number):number {
   return index;
 }
 
+export function checkNeedChange(confManual: ManualConf, previous: ManualConf, queue: string[]): string[] {
+  const command = {} as IEquipmentCommand
+
+  if (!previous || (confManual.fan !== previous.fan)){
+    command.activation = 0;
+    command.onOff = confManual.fan;
+    command.channel = EquipmentChannel.fan
+    queue = addToQueue(command, queue)
+  }
+
+  if (!previous || (confManual.humidity !== previous.humidity)){
+    command.activation = 0;
+    command.onOff = confManual.humidity;
+    command.channel = EquipmentChannel.water_pump
+    queue = addToQueue(command, queue)
+  }
+
+  if (!previous || (confManual.temperature !== previous.temperature)){
+    command.activation = 0;
+    command.onOff = confManual.temperature;
+    command.channel = EquipmentChannel.heater
+    queue = addToQueue(command, queue)
+  }
+
+  if (!previous || (confManual.sombrite !== previous.sombrite)){
+    command.activation = 5;
+    command.onOff = true;
+    command.channel = confManual.sombrite ? EquipmentChannel.open_sombrite : EquipmentChannel.close_sombrite
+    queue = addToQueue(command, queue)
+  }
+
+  return queue
+}
 
 
 function convertDeciamlToBinary(value: number): String[] {
