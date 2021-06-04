@@ -40,7 +40,6 @@ class EquipmentData {
   @Column()
   water_pump: boolean;
 
-  @Exclude()
   @CreateDateColumn()
   created_at: Date;
 
