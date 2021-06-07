@@ -20,9 +20,11 @@ class EquipmentsRepository implements IEquipamanetRepository {
   }
 
   public async findLastData(): Promise<EquipmentData | undefined> {
-    const equipmentData = this.repository.findOne({
+    const equipmentData = await this.repository.findOne({
       order: { id: 'DESC' },
     });
+
+    console.log(equipmentData)
 
     return equipmentData;
   }

@@ -23,7 +23,7 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
   const uv = uvIndex(Number(splitedData[3]))
   const soilRange = {
     value: Number(splitedData[5]),
-    inMin: 377,
+    inMin: 278,
     inMax: 1023,
     outMin: 100,
     outMax: 0,
@@ -156,7 +156,7 @@ export function checkNeedChange(confManual: ManualConf, previous: ManualConf, qu
   }
 
   if (!previous || (confManual.sombrite !== previous.sombrite)){
-    command.activation = 5;
+    command.activation = 1;
     command.onOff = true;
     command.channel = confManual.sombrite ? EquipmentChannel.open_sombrite : EquipmentChannel.close_sombrite
     queue = addToQueue(command, queue)
@@ -167,7 +167,7 @@ export function checkNeedChange(confManual: ManualConf, previous: ManualConf, qu
 
 
 function convertDeciamlToBinary(value: number): String[] {
-  const binaryArray = value.toString(2).split('')
+  const binaryArray = value.toString(2).split('').reverse()
 
   return binaryArray;
 }

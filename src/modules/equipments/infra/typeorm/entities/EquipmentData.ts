@@ -42,10 +42,6 @@ class EquipmentData {
 
   @CreateDateColumn()
   created_at: Date;
-
-  @Exclude()
-  @UpdateDateColumn()
-  updated_at: Date;
 }
 
 export default EquipmentData;

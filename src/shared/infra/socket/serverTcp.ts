@@ -68,7 +68,7 @@ server.on('connection', async function(socket) {
 
           } else {
 
-            console.log('Automatic')
+            console.log('Automatic: ' + new Date())
 
             const now = new Date()
             const dateOpenSombrite: string[] | undefined = confAuto?.open_sombrite.split(':')
@@ -81,18 +81,20 @@ server.on('connection', async function(socket) {
             closeDate.setHours(Number(dateCloseSombrite && dateCloseSombrite[0]))
             closeDate.setMinutes(Number(dateCloseSombrite && dateCloseSombrite[1]))
 
-            if(isBefore(now, closeDate) && isAfter(now, openDate) && !data.sombrite){
-              command.activation = 7;
-              command.onOff = true;
-              command.channel = EquipmentChannel.open_sombrite
-              commandQueue = addToQueue(command, commandQueue)
-            }
-
-            if(isAfter(now, closeDate) && data.sombrite) {
-              command.activation = 7;
+            if(isBefore(now, openDate) && isAfter(now, closeDate) && !data.sombrite){
+              command.activation = 1;
               command.onOff = true;
               command.channel = EquipmentChannel.close_sombrite
               commandQueue = addToQueue(command, commandQueue)
+              executedTodaySombrite.closeSombrite = true;
+            }
+
+            if(isAfter(now, openDate) && data.sombrite) {
+              command.activation = 1;
+              command.onOff = true;
+              command.channel = EquipmentChannel.open_sombrite
+              commandQueue = addToQueue(command, commandQueue)
+              executedTodaySombrite.openSombrite = true;
             }
 
             if(confAuto?.min_temperature && data.temperature < confAuto?.min_temperature) {

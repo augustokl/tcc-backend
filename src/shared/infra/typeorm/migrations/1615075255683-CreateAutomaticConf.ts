@@ -40,7 +40,7 @@ export class CreateAutomaticConf1615075255683 implements MigrationInterface {
           },
           {
             name: 'updated_at',
-            type: 'timestamp',
+            type: 'timestamp with time zone',
             default: 'now()',
           },
         ],
