@@ -31,13 +31,13 @@ export async function checkCommandSombrite(
   ExecutedCommandController,
   executedToday:IExecutedToday): Promise<IExecutedToday>{
     command = command.trimEnd();
+    await executedCommandController.create({command})
+
     if (command === open){
-      await executedCommandController.create({command})
       executedToday.openSombrite = true
       executedToday.day = day
     }
     if (command === close){
-      await executedCommandController.create({command})
       executedToday.closeSombrite = true
       executedToday.day = day
     }

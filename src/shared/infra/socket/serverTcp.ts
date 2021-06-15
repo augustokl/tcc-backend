@@ -111,6 +111,13 @@ server.on('connection', async function(socket) {
               commandQueue = addToQueue(command, commandQueue)
             }
 
+            if(confAuto?.max_temperature && data.heater && data.temperature > confAuto?.max_temperature) {
+              command.activation = 0;
+              command.onOff = false;
+              command.channel = EquipmentChannel.heater
+              commandQueue = addToQueue(command, commandQueue)
+            }
+
             if(confAuto?.min_temperature &&
                 confAuto?.max_temperature &&
                 (data.heater || data.fan) &&

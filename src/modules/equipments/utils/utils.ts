@@ -70,7 +70,7 @@ function checkSombriteStatus(executedToday: IExecutedToday): boolean {
     return false
   }
 
-  if (executedToday.openSombrite && !executedToday.closeSombrite) {
+  if (!executedToday.openSombrite && executedToday.closeSombrite) {
     return true
   }
 
