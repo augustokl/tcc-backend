@@ -77,9 +77,11 @@ server.on('connection', async function(socket) {
             const closeDate = new Date()
 
             openDate.setHours(Number(dateOpenSombrite && dateOpenSombrite[0]))
-            openDate.setMinutes(Number(dateOpenSombrite && dateOpenSombrite[1]))
+            openDate.setMinutes(Number(dateOpenSombrite && dateOpenSombrite[1]) - 1)
             closeDate.setHours(Number(dateCloseSombrite && dateCloseSombrite[0]))
-            closeDate.setMinutes(Number(dateCloseSombrite && dateCloseSombrite[1]))
+            closeDate.setMinutes(Number(dateCloseSombrite && dateCloseSombrite[1]) - 1)
+
+            console.log(isBefore(now, openDate), isAfter(now, closeDate), !data.sombrite, openDate, closeDate)
 
             if(isBefore(now, openDate) && isAfter(now, closeDate) && !data.sombrite){
               command.activation = 1;
@@ -88,6 +90,9 @@ server.on('connection', async function(socket) {
               commandQueue = addToQueue(command, commandQueue)
               executedTodaySombrite.closeSombrite = true;
             }
+
+            console.log(isAfter(now, openDate), data.sombrite, openDate)
+
 
             if(isAfter(now, openDate) && data.sombrite) {
               command.activation = 1;

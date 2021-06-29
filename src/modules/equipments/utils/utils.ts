@@ -23,7 +23,7 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
   const uv = uvIndex(Number(splitedData[3]))
   const soilRange = {
     value: Number(splitedData[5]),
-    inMin: 278,
+    inMin: 130,
     inMax: 1023,
     outMin: 100,
     outMax: 0,
@@ -33,6 +33,8 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
 
   const sombriteStauts = checkSombriteStatus(executedToday)
 
+  const waterFlow = (Number(splitedData[4]) / 5880).toFixed(2)
+
   return {
     fan: Boolean(Number(outputs[EquipmentChannel.fan])),
     heater: Boolean(Number(outputs[EquipmentChannel.heater])),
@@ -40,9 +42,9 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
     water_pump: Boolean(Number(outputs[EquipmentChannel.water_pump])),
     temperature: Number(splitedData[0]),
     humidity: Number(splitedData[1]),
-    water_flow: 0,
+    water_flow: Number(waterFlow),
     soil_humidity: soilHumidity,
-    uv: uv
+    uv: 0
   }
 }
 
@@ -69,6 +71,8 @@ function checkSombriteStatus(executedToday: IExecutedToday): boolean {
 
     return false
   }
+
+  console.log(executedToday)
 
   if (!executedToday.openSombrite && executedToday.closeSombrite) {
     return true
@@ -155,10 +159,13 @@ export function checkNeedChange(confManual: ManualConf, previous: ManualConf, qu
     queue = addToQueue(command, queue)
   }
 
+  if(previous) {
+    console.log(confManual.sombrite,previous.sombrite)
+  }
   if (!previous || (confManual.sombrite !== previous.sombrite)){
     command.activation = 1;
     command.onOff = true;
-    command.channel = confManual.sombrite ? EquipmentChannel.open_sombrite : EquipmentChannel.close_sombrite
+    command.channel = !confManual.sombrite ? EquipmentChannel.open_sombrite : EquipmentChannel.close_sombrite
     queue = addToQueue(command, queue)
   }
 
