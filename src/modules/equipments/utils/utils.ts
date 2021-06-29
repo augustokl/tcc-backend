@@ -44,7 +44,7 @@ export function splitData(data:String, executedToday: IExecutedToday): ICreateEq
     humidity: Number(splitedData[1]),
     water_flow: Number(waterFlow),
     soil_humidity: soilHumidity,
-    uv: 0
+    uv: uv
   }
 }
 
